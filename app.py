@@ -1,10 +1,11 @@
-import json
+import pandas as pd
 import smtplib
-import ssl
-from email.message import EmailMessage
-import requests
+from email.mime.text import MIMEText
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import os
+import json
+
 
 # Konfiguracja
 ETF_LIST = {
