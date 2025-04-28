@@ -3,7 +3,7 @@ import smtplib
 import ssl
 from email.message import EmailMessage
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 # Konfiguracja
