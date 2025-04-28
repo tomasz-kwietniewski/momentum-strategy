@@ -32,16 +32,23 @@ def fetch_data(symbol):
     r = requests.get(url)
     df = pd.read_csv(io.StringIO(r.text))
 
-    # Sprawdzamy, jak się nazywa pierwsza kolumna
+    # Ustal pierwszą kolumnę jako datę
     first_col = df.columns[0]
     df = df.rename(columns={first_col: "Date"})
-
     df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
     df = df.dropna(subset=["Date"])
     df = df.set_index("Date").sort_index()
 
+    # Odcinamy od daty START_DATE
     df = df[df.index >= pd.to_datetime(START_DATE)]
-    return df["Zamknięcie"]
+
+    # Ustalamy kolumnę zamknięcia
+    if "Close" in df.columns:
+        return df["Close"]
+    elif "Zamknięcie" in df.columns:
+        return df["Zamknięcie"]
+    else:
+        raise ValueError(f"Brak kolumny Close/Zamknięcie dla {symbol}")
 
 
 
