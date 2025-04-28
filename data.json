@@ -1,11 +1,5 @@
 {
-    "history": [
-        {
-            "date": "2025-04-28",
-            "signal": "BTC",
-            "capital": 100000
-        }
-    ],
-    "current_signal": "BTC",
-    "capital": 90010.46433090117
+  "history": [],
+  "current_signal": null,
+  "capital": 100000
 }

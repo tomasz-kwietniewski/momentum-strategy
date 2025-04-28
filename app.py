@@ -1,25 +1,21 @@
 import pandas as pd
-import requests
 import smtplib
-from email.message import EmailMessage
 import ssl
+import requests
+from email.message import EmailMessage
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import os
 import json
 
-
-
 # Konfiguracja
 ETF_LIST = {
     "SP500": "US.SPY",
-    "BTC": "BTCUSD",
-    "GOTÓWKA": "US.SHG"
+    "BTC": "BTCUSD"
 }
 START_DATE = "2021-01-01"
 INITIAL_CAPITAL = 100000
 DATA_FILE = "data.json"
-HTML_FILE = "momentum.html"
 
 SMTP_SERVER = "h57.seohost.pl"
 SMTP_PORT = 465
@@ -31,12 +27,11 @@ MAIL_TO = "tomasz.kwietniewski@gmail.com"
 def fetch_change(symbol):
     url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
     r = requests.get(url)
-    lines = r.text.strip().split("\n")[1:]  # pomiń nagłówek
-    prices = [float(line.split(",")[4]) for line in lines if line]
-    if len(prices) < 63:  # około 3 miesiące
-        return None
-    pct_change = ((prices[-1] / prices[-63]) - 1) * 100
-    return pct_change
+    lines = r.text.strip().split("\n")[1:]  # Pomijamy nagłówek
+    prices = pd.read_csv(pd.compat.StringIO(r.text))
+    prices["Date"] = pd.to_datetime(prices["Date"])
+    prices = prices.set_index("Date")
+    return prices["Close"]
 
 def load_data():
     if os.path.exists(DATA_FILE):
@@ -67,11 +62,11 @@ def send_email(subject, body):
 
 def update_html(data):
     today = datetime.now().strftime("%d.%m.%Y")
-    current_signal = data.get("current_signal", "Brak sygnału")
-    capital = data.get("capital", 0)
+    current_signal = data["current_signal"] or "Brak sygnału"
+    capital = data["capital"]
 
     history_rows = ""
-    for record in data.get("history", []):
+    for record in data["history"]:
         history_rows += f"<tr><td>{record['date']}</td><td>{record['signal']}</td><td>{record['capital']:.2f} zł</td></tr>\n"
 
     # Wczytaj szablon HTML
@@ -83,52 +78,67 @@ def update_html(data):
                    .replace("{{CAPITAL}}", f"{capital:.2f}")\
                    .replace("{{HISTORY_ROWS}}", history_rows)
 
+    os.makedirs("docs", exist_ok=True)
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
-
-
 
 def main():
     today = datetime.now()
     data = load_data()
 
-    changes = {}
+    # Fetch data for all ETFs
+    prices = {}
     for name, symbol in ETF_LIST.items():
-        change = fetch_change(symbol)
-        if change is not None:
-            changes[name] = change
+        prices[name] = fetch_change(symbol)
 
-    best_signal = max(changes, key=changes.get)
+    dates = prices["SP500"].index
+    dates = dates[(dates >= START_DATE)]
 
-    if today.day == 15:
-        # 15-tego tylko wysyłka ostrzeżenia
-        if best_signal != data["current_signal"]:
-            send_email(
-                "Momentum: możliwa zmiana sygnału",
-                f"Obecny sygnał: {data['current_signal']}\nNowy sugerowany sygnał: {best_signal}"
-            )
-    elif (today.day >= 28 and today.month != (today + timedelta(days=4)).month) or today.day == 31:
-        # Ostatni dzień miesiąca
-        if best_signal != data["current_signal"]:
-            data["current_signal"] = best_signal
-            data["history"].append({
-                "date": today.strftime("%Y-%m-%d"),
-                "signal": best_signal,
-                "capital": data["capital"]
-            })
-            send_email(
-                "Momentum: zmiana sygnału",
-                f"Nowy sygnał: {best_signal}\nZmiana została dokonana."
-            )
+    for date in dates:
+        if date.day not in [15, date.days_in_month]:  # tylko 15-tego lub ostatniego dnia
+            continue
+
+        # Obliczamy 3M zmiany
+        changes = {}
+        for name in ETF_LIST.keys():
+            try:
+                current_price = prices[name].loc[date]
+                three_months_ago = date - relativedelta(months=3)
+                old_price = prices[name].loc[prices[name].index <= three_months_ago][-1]
+                change = ((current_price / old_price) - 1) * 100
+                changes[name] = change
+            except:
+                changes[name] = -9999  # Słaby wynik jeśli brak danych
+
+        # "Gotówka" zawsze +0%, traktujemy jako safe haven
+        changes["GOTÓWKA"] = 0
+
+        best_signal = max(changes, key=changes.get)
+
+        if date.day == 15:
+            # 15-tego ostrzeżenie
+            if best_signal != data["current_signal"]:
+                send_email(
+                    "Momentum: możliwa zmiana sygnału",
+                    f"Obecny sygnał: {data['current_signal']}\nNowy sugerowany sygnał: {best_signal}"
+                )
         else:
+            # ostatni dzień miesiąca
+            if best_signal != data["current_signal"]:
+                data["current_signal"] = best_signal
+                send_email(
+                    "Momentum: zmiana sygnału",
+                    f"Nowy sygnał: {best_signal}\nZmiana została dokonana."
+                )
+
+            # Zmieniamy kapitał
+            monthly_change = changes.get(data["current_signal"], 0)
+            data["capital"] *= (1 + monthly_change / 100)
             data["history"].append({
-                "date": today.strftime("%Y-%m-%d"),
+                "date": date.strftime("%Y-%m-%d"),
                 "signal": data["current_signal"],
                 "capital": data["capital"]
             })
-        # Zmieniamy wartość kapitału zgodnie z miesięcznym wynikiem
-        monthly_change = changes[data["current_signal"]]
-        data["capital"] *= (1 + monthly_change / 100)
 
     update_html(data)
     save_data(data)

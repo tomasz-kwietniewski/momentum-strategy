@@ -5,35 +5,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Strategia Crypto GEM by Tomasz K.</title>
   <style>
-    body { font-family: 'Arial', sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
-    header { text-align: center; margin-bottom: 40px; }
-    h1 { font-size: 2.5em; margin: 0; color: #2c3e50; }
-    p { font-size: 1.2em; color: #555; }
-    table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
-    th { background-color: #4CAF50; color: white; }
-    tr:nth-child(even) { background-color: #f2f2f2; }
-    .highlight { font-weight: bold; color: #27ae60; }
-    footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #aaa; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      padding: 10px 0;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 5px;
+    }
+    p {
+      font-size: 1rem;
+      color: #666;
+    }
+    section {
+      background: white;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 800px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #0073e6;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #999;
+    }
   </style>
 </head>
 <body>
 
 <header>
   <h1>Strategia Crypto GEM by Tomasz K.</h1>
-  <p>Aktualny sygnał: <span class="highlight">{{CURRENT_SIGNAL}}</span></p>
-  <p>Data aktualizacji: {{UPDATE_DATE}}</p>
-  <p>Kapitał: <strong>{{CAPITAL}} zł</strong></p>
+  <p>Momentum Investing - aktualizacja codzienna</p>
 </header>
 
 <section>
-  <h2>Historia zmian sygnału</h2>
+  <h2>📈 Aktualny sygnał: <strong>{{CURRENT_SIGNAL}}</strong></h2>
+  <p>Data aktualizacji: <strong>{{UPDATE_DATE}}</strong></p>
+  <p>Kapitał: <strong>{{CAPITAL}} zł</strong></p>
+
+  <h2>📜 Historia zmian sygnału</h2>
   <table>
     <thead>
       <tr>
         <th>Data</th>
         <th>Sygnał</th>
-        <th>Kapitał (PLN)</th>
+        <th>Kapitał</th>
       </tr>
     </thead>
     <tbody>
@@ -43,7 +84,7 @@
 </section>
 
 <footer>
-  &copy; {{UPDATE_DATE}} Tomasz K. | Strategia Crypto GEM
+  © 2025 Tomasz Kwietniewski | Wszelkie prawa zastrzeżone
 </footer>
 
 </body>
