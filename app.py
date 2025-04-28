@@ -67,11 +67,11 @@ def send_email(subject, body):
 
 def update_html(data):
     today = datetime.now().strftime("%d.%m.%Y")
-    current_signal = data["current_signal"] or "Brak sygnału"
-    capital = data["capital"]
+    current_signal = data.get("current_signal", "Brak sygnału")
+    capital = data.get("capital", 0)
 
     history_rows = ""
-    for record in data["history"]:
+    for record in data.get("history", []):
         history_rows += f"<tr><td>{record['date']}</td><td>{record['signal']}</td><td>{record['capital']:.2f} zł</td></tr>\n"
 
     # Wczytaj szablon HTML
@@ -85,6 +85,7 @@ def update_html(data):
 
     with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
+
 
 
 def main():
