@@ -1,10 +1,13 @@
 import pandas as pd
+import requests
 import smtplib
-from email.mime.text import MIMEText
+from email.message import EmailMessage
+import ssl
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import os
 import json
+
 
 
 # Konfiguracja
