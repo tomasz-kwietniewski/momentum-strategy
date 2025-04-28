@@ -29,11 +29,21 @@ MAIL_TO = "tomasz.kwietniewski@gmail.com"
 def fetch_change(symbol):
     url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
     r = requests.get(url)
-    lines = r.text.strip().split("\n")[1:]  # Pomijamy nagłówek
     prices = pd.read_csv(io.StringIO(r.text))
-    prices["Date"] = pd.to_datetime(prices["Date"])
-    prices = prices.set_index("Date")
-    return prices["Close"]
+    prices["Data"] = pd.to_datetime(prices["Data"])
+    prices = prices.sort_values("Data")
+
+    # Bierzemy dane od daty startowej
+    prices = prices[prices["Data"] >= pd.to_datetime(START_DATE)]
+
+    if len(prices) == 0:
+        return None
+
+    first_price = prices.iloc[0]["Zamknięcie"]
+    last_price = prices.iloc[-1]["Zamknięcie"]
+    pct_change = (last_price / first_price - 1) * 100
+    return pct_change
+
 
 def load_data():
     if os.path.exists(DATA_FILE):
