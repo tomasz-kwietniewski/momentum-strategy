@@ -15,8 +15,9 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - name: Install requests
-      run: pip install requests
+    - name: Install dependencies
+      run: pip install requests pandas
+
     - name: Run app
       run: python app.py
     - name: Commit changes
