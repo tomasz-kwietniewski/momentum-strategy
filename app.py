@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import os
 import json
+import io
+
 
 # Konfiguracja
 ETF_LIST = {
@@ -28,7 +30,7 @@ def fetch_change(symbol):
     url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
     r = requests.get(url)
     lines = r.text.strip().split("\n")[1:]  # Pomijamy nagłówek
-    prices = pd.read_csv(pd.compat.StringIO(r.text))
+    prices = pd.read_csv(io.StringIO(r.text))
     prices["Date"] = pd.to_datetime(prices["Date"])
     prices = prices.set_index("Date")
     return prices["Close"]
