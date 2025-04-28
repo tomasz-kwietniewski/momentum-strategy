@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategia Crypto GEM by Tomasz K.</title>
+  <style>
+    body { font-family: 'Arial', sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
+    header { text-align: center; margin-bottom: 40px; }
+    h1 { font-size: 2.5em; margin: 0; color: #2c3e50; }
+    p { font-size: 1.2em; color: #555; }
+    table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+    th, td { padding: 12px; border: 1px solid #ddd; text-align: center; }
+    th { background-color: #4CAF50; color: white; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    .highlight { font-weight: bold; color: #27ae60; }
+    footer { margin-top: 50px; text-align: center; font-size: 0.9em; color: #aaa; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Strategia Crypto GEM by Tomasz K.</h1>
+  <p>Aktualny sygnał: <span class="highlight">{{CURRENT_SIGNAL}}</span></p>
+  <p>Data aktualizacji: {{UPDATE_DATE}}</p>
+  <p>Kapitał: <strong>{{CAPITAL}} zł</strong></p>
+</header>
+
+<section>
+  <h2>Historia zmian sygnału</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Sygnał</th>
+        <th>Kapitał (PLN)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{HISTORY_ROWS}}
+    </tbody>
+  </table>
+</section>
+
+<footer>
+  &copy; {{UPDATE_DATE}} Tomasz K. | Strategia Crypto GEM
+</footer>
+
+</body>
+</html>

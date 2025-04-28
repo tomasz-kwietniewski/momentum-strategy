@@ -67,49 +67,25 @@ def send_email(subject, body):
 
 def update_html(data):
     today = datetime.now().strftime("%d.%m.%Y")
-    current_signal = data["current_signal"]
+    current_signal = data["current_signal"] or "Brak sygnału"
     capital = data["capital"]
 
     history_rows = ""
     for record in data["history"]:
         history_rows += f"<tr><td>{record['date']}</td><td>{record['signal']}</td><td>{record['capital']:.2f} zł</td></tr>\n"
 
-    html = f"""
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Strategia Momentum</title>
-<style>
-body {{ font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }}
-h1 {{ font-size: 2em; }}
-h2 {{ font-size: 1.5em; margin-top: 20px; }}
-table {{ width: 100%; border-collapse: collapse; margin-top: 20px; }}
-th, td {{ border: 1px solid #ddd; padding: 8px; text-align: center; }}
-th {{ background-color: #4CAF50; color: white; }}
-tr:nth-child(even) {{ background-color: #f2f2f2; }}
-</style>
-</head>
-<body>
-<h1>Aktualny sygnał: {current_signal}</h1>
-<p>Data aktualizacji: {today}</p>
-<p>Kapitał: {capital:.2f} zł</p>
+    # Wczytaj szablon HTML
+    with open("template.html", "r", encoding="utf-8") as f:
+        template = f.read()
 
-<h2>Historia zmian sygnału</h2>
-<table>
-<thead>
-<tr><th>Data</th><th>Sygnał</th><th>Kapitał</th></tr>
-</thead>
-<tbody>
-{history_rows}
-</tbody>
-</table>
-</body>
-</html>
-    """
-    with open(HTML_FILE, "w", encoding="utf-8") as f:
+    html = template.replace("{{CURRENT_SIGNAL}}", current_signal)\
+                   .replace("{{UPDATE_DATE}}", today)\
+                   .replace("{{CAPITAL}}", f"{capital:.2f}")\
+                   .replace("{{HISTORY_ROWS}}", history_rows)
+
+    with open("docs/index.html", "w", encoding="utf-8") as f:
         f.write(html)
+
 
 def main():
     today = datetime.now()
