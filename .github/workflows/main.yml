@@ -20,10 +20,11 @@ jobs:
 
     - name: Run app
       run: python app.py
-    - name: Commit changes
+    - name: Commit and Push changes
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git add .
         git commit -m "Auto update by momentum strategy" || echo "No changes to commit"
-        git push
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
+
