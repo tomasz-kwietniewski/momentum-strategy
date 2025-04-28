@@ -48,6 +48,14 @@
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+    .highlight {
+      background-color: #d1ffd6;
+      padding: 10px;
+      margin-top: 20px;
+      border: 2px solid #00b300;
+      border-radius: 10px;
+      font-size: 1.2rem;
+    }
     footer {
       text-align: center;
       margin-top: 30px;
@@ -64,9 +72,14 @@
 </header>
 
 <section>
-  <h2>📈 Aktualny sygnał: <strong>{{CURRENT_SIGNAL}}</strong></h2>
-  <p>Data aktualizacji: <strong>{{UPDATE_DATE}}</strong></p>
-  <p>Kapitał: <strong>{{CAPITAL}} zł</strong></p>
+  <div class="highlight">
+    📈 <strong>Aktualny lider na dziś:</strong> {{TODAY_LEADER}}
+  </div>
+
+  <h2>📋 Aktualny sygnał inwestycyjny</h2>
+  <p><strong>{{CURRENT_SIGNAL}}</strong> (sygnał wg strategii GEM)</p>
+  <p>Data ostatniej aktualizacji sygnału: <strong>{{UPDATE_DATE}}</strong></p>
+  <p>Kapitał strategii: <strong>{{CAPITAL}} zł</strong></p>
 
   <h2>📜 Historia zmian sygnału</h2>
   <table>

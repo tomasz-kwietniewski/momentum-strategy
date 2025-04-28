@@ -25,6 +25,13 @@
       font-size: 1.2em;
       color: #555;
     }
+    section {
+      background: #e0f7fa;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -60,8 +67,13 @@
   <p>Oparta o zasady zmiany sygnału wyłącznie na koniec miesiąca.</p>
 </header>
 
+<section>
+  <h2>📈 Lider dnia: {{TODAY_LEADER}}</h2>
+</section>
+
 <main>
-  <h2>Aktualny sygnał: {{CURRENT_SIGNAL}}</h2>
+  <h2>Aktualny sygnał inwestycyjny</h2>
+  <p><strong>{{CURRENT_SIGNAL}}</strong></p>
   <p>Data aktualizacji: {{UPDATE_DATE}}</p>
   <p>Kapitał: {{CAPITAL}} zł</p>
 
