@@ -31,10 +31,19 @@ def fetch_data(symbol):
     url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
     r = requests.get(url)
     df = pd.read_csv(io.StringIO(r.text))
-    df["Data"] = pd.to_datetime(df["Data"])
-    df = df.set_index("Data").sort_index()
+    
+    # Ujednolicamy nazwy kolumn
+    if "Data" in df.columns:
+        df = df.rename(columns={"Data": "Date"})
+    elif "Date" not in df.columns:
+        raise ValueError(f"Brak kolumny daty w pliku dla {symbol}")
+
+    df["Date"] = pd.to_datetime(df["Date"])
+    df = df.set_index("Date").sort_index()
+
     df = df[df.index >= pd.to_datetime(START_DATE)]
     return df["Zamknięcie"]
+
 
 def load_data():
     if os.path.exists(DATA_FILE):
