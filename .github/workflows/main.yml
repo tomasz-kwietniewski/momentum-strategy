@@ -1,0 +1,28 @@
+name: Update Momentum Strategy
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # Codziennie o 7:00 rano UTC
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install requests
+      run: pip install requests
+    - name: Run app
+      run: python app.py
+    - name: Commit changes
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+        git add .
+        git commit -m "Auto update by momentum strategy" || echo "No changes to commit"
+        git push
